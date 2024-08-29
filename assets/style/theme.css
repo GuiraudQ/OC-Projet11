@@ -1,0 +1,67 @@
+@font-face {
+    font-family: "Space Mono";
+    src: url("../font/Space_Mono/SpaceMono-Regular.ttf") format("TrueType");
+    font-weight: 400;
+    font-style: normal;
+}
+* {
+    font-family: 'Space Mono', Arial;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5vw;
+    height: 6vh;
+}
+header a.custom-logo-link img.custom-logo{
+    width: 250px;
+}
+header nav ul#primary-menu li a{
+    color: black;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Space Mono', Arial;
+    font-weight: 400;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid black;
+    height: 6vh;
+}
+footer ul#footer-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+footer ul#footer-menu li{
+    margin:0 25px
+}
+footer ul#footer-menu li a{
+    color: black;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'Space Mono', Arial;
+}
+
+#contact{
+    position: fixed;
+
+    width: clamp(125px, 50vw, 400px);
+    height: clamp(600px,60vh, 800px);
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+
+    border: 5px solid black;
+    background: white;
+}
+#contact h2{
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 50px;
+}
