@@ -9,10 +9,18 @@ add_theme_support( 'title-tag' );
 function enqueue_theme_styles() {
     //Reset CSS
     wp_enqueue_style('reset-css', 'https://cdn.jsdelivr.net/gh/jgthms/minireset.css@master/minireset.min.css', array(), '8.0.1');
+
+    // Enqueue App perso
+    wp_enqueue_script('app', get_stylesheet_directory_uri() . '/js/app.js', array(), '1.0.0', true, filemtime(get_stylesheet_directory() . '/js/app.js'));
   
     // Chemin vers le fichier CSS
     $theme_version = wp_get_theme()->get('Version');
     wp_enqueue_style('theme-styles', get_template_directory_uri() . '/assets/style/theme.css', array(), $theme_version);
+
+    if( is_single() ) {
+        wp_enqueue_style('single-styles', get_template_directory_uri() . '/assets/style/single-photo.css', array(), $theme_version);
+        wp_enqueue_script('single-script', get_template_directory_uri() . '/js/single-photo.js', array(), $theme_version);
+    }
 }
 add_action('wp_enqueue_scripts', 'enqueue_theme_styles');
 

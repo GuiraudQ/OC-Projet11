@@ -7,7 +7,11 @@
 * {
     font-family: 'Space Mono', Arial;
 }
+.container{
+    padding: 0 5vw;
+}
 
+/* _________________________________________________HEADER_________________________________________________ */
 header {
     display: flex;
     justify-content: space-between;
@@ -18,6 +22,14 @@ header {
 header a.custom-logo-link img.custom-logo{
     width: 250px;
 }
+header nav ul#primary-menu{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+header nav ul#primary-menu li{
+    margin:0 15px
+}
 header nav ul#primary-menu li a{
     color: black;
     text-decoration: none;
@@ -26,6 +38,7 @@ header nav ul#primary-menu li a{
     font-weight: 400;
 }
 
+/* _________________________________________________FOOTER_________________________________________________ */
 footer {
     display: flex;
     justify-content: center;
@@ -48,7 +61,12 @@ footer ul#footer-menu li a{
     font-family: 'Space Mono', Arial;
 }
 
-#contact{
+/* _________________________________________________CONTACT_________________________________________________ */
+#contact {
+    display: none;
+}
+#contact.active{
+    display: block;
     position: fixed;
 
     width: clamp(125px, 50vw, 400px);
