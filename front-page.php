@@ -1,5 +1,12 @@
 <?php get_header();
 
+unset($_SESSION['paged']);
+unset($_SESSION['categorie_id']);
+unset($_SESSION['categorie_name']);
+unset($_SESSION['format_id']);
+unset($_SESSION['format_name']);
+unset($_SESSION['filter_name']);
+
 if( have_posts() ) : while( have_posts() ) : the_post();
 
 $title = get_the_title();
@@ -78,7 +85,7 @@ wp_reset_postdata();
                     </div>
                     <?php
                 endif;
-                wp_reset_postdata()
+                wp_reset_postdata();
             ?>
         </div>
         <div class="blocListPhoto">
@@ -88,13 +95,36 @@ wp_reset_postdata();
                     'posts_per_page' => 6, // Nombre d'articles affichés au chargement initial
                 );
                 $query = new WP_Query($args2);
+
                 
-                if ($query->have_posts()) : while ($query->have_posts()) : $query->the_post(); ?>
-                    <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
+                
+                if ($query->have_posts()) : while ($query->have_posts()) : $query->the_post();
+
+                $categorie_post = get_the_terms( get_the_ID() , 'categorie');
+                $categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+                ?>
+                    <div class="image">
                         <?php if ( has_post_thumbnail() ): ?>
-                            <?php the_post_thumbnail(); ?>
+                            <a>
+                                <?php the_post_thumbnail(); ?>
+                            </a>
                         <?php endif; ?>
-                    </a>		
+                        <div class="imgHover">
+                            <div class="fullScreenIcon" onclick="openLightbox('<?php echo get_the_ID();?>', '<?php echo admin_url('admin-ajax.php');?>')">
+                                <span class="material-symbols-outlined">fullscreen</span>
+                            </div>
+                            <div class="eyeIcon">
+                                <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </a>
+                            </div>
+                            <div class="imgInfo">
+                                <p><?php the_field('references'); ?></p>
+                                <p><?php echo($categorie_name) ?></p>
+                            </div>
+                        </div>
+                    </div> 
                 <?php endwhile;
                 wp_reset_postdata();
             ?>
@@ -104,6 +134,9 @@ wp_reset_postdata();
     </section>
 </div>
 
+<div id="lightbox">
+    <p>Veuillez patienter</p>
+</div>
 
 <?php endwhile; endif; ?>   
 <?php get_footer(); ?>

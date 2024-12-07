@@ -124,3 +124,31 @@ document.addEventListener("DOMContentLoaded", function (event) {
     });
   });
 });
+
+const lightbox = document.querySelector("#lightbox");
+
+function openLightbox(id, url) {
+  lightbox.classList.add("open");
+
+  fetch(url, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      action: "lightbox_info",
+      postId: id,
+    }),
+  })
+    .then((response) => response.text()) // Convertit la réponse en texte
+    .then((response) => {
+      if (response) {
+        lightbox.innerHTML = response;
+      } else {
+      }
+    })
+    .catch((error) => console.error("Erreur :", error));
+}
+function closeLightbox(id, url) {
+  lightbox.classList.remove("open");
+}

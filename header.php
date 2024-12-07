@@ -19,8 +19,11 @@
     }
     ?>
 
-
-        <!-- Menu de navigation -->
+    <!-- Menu de navigation -->
+    <div id="menu">
+        <div class="menu-burger">
+            <span class="material-symbols-outlined">menu</span>
+        </div>
         <nav>
             <?php
             wp_nav_menu(array(
@@ -29,6 +32,7 @@
             ));
             ?>
         </nav>
+    </div>
     </header>
 
     <main>

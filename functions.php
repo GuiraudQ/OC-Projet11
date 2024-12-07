@@ -62,28 +62,66 @@ function theme_setup() {
 }
 
 //======================================================================
-// Fonction factoriser et variable
+// Fonctions de factorisation
 //======================================================================
-$category_id = null;
-$category_name = "";
-$category_id = null;
-$category_name = "";
-$filter_name = "";
-$paged = 0;
+function loadArgs(){
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-function loadArgs($category_name = null, $paged = 1){
     $args = array(
         'post_type' => 'photo',
         'posts_per_page' => 6, // Nombre d'articles par page
-        'paged' => $paged, // Page actuelle pour la pagination
     );
 
-    if ($category_name) {
-        $args['categorie'] = $category_name->name;
+    if ($_SESSION['paged']) {
+        $args['paged'] = $_SESSION['paged'];
     }
+    if ($_SESSION['categorie_id']) {
+        $term = get_term($_SESSION['categorie_id'], 'categorie');
+
+        $args['categorie'] = $term->name;
+    }
+    if ($_SESSION['format_id']) {
+        $term = get_term($_SESSION['format_id'], 'format');
+
+        $args['format'] = $term->name;
+    }
+    if ($_SESSION['filter_name']) {
+        $args['order'] = $_SESSION['filter_name'];
+    }
+
+    return $args;
 }
-function blocList($link, $title, $isImage, $image){
-    $myHtml = '<a href="' . $link . '" title="' . $title . '">' . $image . '</a>';
+function blocList($link, $title, $image, $the_Id, $the_Ref, $the_Cat) {
+    ob_start(); // Démarre la mise en mémoire tampon
+    ?>
+    <div class="image">
+        <?php if (!empty($image)): ?>
+            <a href="<?php echo $link; ?>" title="<?php echo $title; ?>">
+                <?php echo $image; ?>
+            </a>
+        <?php endif; ?>
+        <div class="imgHover">
+            <div class="fullScreenIcon" onclick="openLightbox('<?php echo $the_Id; ?>', '<?php echo admin_url('admin-ajax.php'); ?>')">
+                <span class="material-symbols-outlined">fullscreen</span>
+            </div>
+            <div class="eyeIcon">
+                <a href="<?php echo $link; ?>" title="<?php echo $title; ?>">
+                    <span class="material-symbols-outlined">visibility</span>
+                </a>
+            </div>
+            <div class="imgInfo">
+                <p><?php echo htmlspecialchars($the_Ref); ?></p>
+                <p><?php echo htmlspecialchars($the_Cat); ?></p>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean(); // Récupère et retourne le contenu de la mémoire tampon
+}
+function blocFalse(){
+    $myHtml = 'Il n\'y a pas d\'article a charger modifier vos filtres';
     return $myHtml;
 }
 
@@ -99,35 +137,23 @@ function load_more_photos() {
     }
 
     $_SESSION['paged'] = intval($_POST['page'] + 1); // Récupérer la page à charger (incrémenté côté client)
-    
-    if (isset($_SESSION['categorie_id']) && $_SESSION['categorie_id'] != 0 ){
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6, // Même nombre que dans la requête initiale
-            'categorie' => $_SESSION['category_name'],
-            'paged' => $_SESSION['paged'],
-        );
-    }else {
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6, // Même nombre que dans la requête initiale
-            'paged' => $_SESSION['paged'],
-        );
-    }
+
+    $args = loadArgs();
 
     $query = new WP_Query($args);
 
     if ($query->have_posts()) :
-        while ($query->have_posts()) : $query->the_post(); ?>
-            <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
-                <?php if ( has_post_thumbnail() ){
-                    the_post_thumbnail();
-                }?>
-            </a>		
-        <?php endwhile;
+        while ($query->have_posts()) : $query->the_post();
+
+            $categorie_post = get_the_terms( get_the_ID() , 'categorie');
+            $categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+            echo blocList(get_the_permalink(), get_the_title(), get_the_post_thumbnail(), get_the_ID(), get_field('references'), $categorie_name);
+
+        endwhile;
         wp_reset_postdata();
     else :
-        wp_send_json(false); // Si pas d'articles à charger, on renvoie false
+        wp_send_json(blocFalse()); // Si pas d'articles à charger, on renvoie false
     endif;
 
     wp_die(); // Terminer la requête AJAX correctement
@@ -143,41 +169,27 @@ function select_categorie() {
     if (!isset($_POST['categorieId'])) {
         wp_send_json_error('ID de catégorie manquant');
     }
-
+    unset($_SESSION['paged']);
     $_SESSION['categorie_id'] = intval($_POST['categorieId']);
-    $term = get_term($_SESSION['categorie_id'], 'categorie');
-    $_SESSION['categorie_name'] = $term->name; // Met à jour la variable globale
 
-    if ($_SESSION['categorie_id'] === 0) {
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6,
-        );
-    } else {        
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6,
-            'categorie' => $_SESSION['categorie_name'], // Utilise le nom de la catégorie
-        );
-    }
+    $args = loadArgs();
 
     $query = new WP_Query($args);
 
     if ($query->have_posts()) :
-        while ($query->have_posts()) : $query->the_post(); ?>
-            <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
-                <?php if ( has_post_thumbnail() ): ?>
-                    <?php the_post_thumbnail(); ?>
-                <?php endif; ?>
-            </a>		
-        <?php endwhile;
+        while ($query->have_posts()) : $query->the_post();
+        $categorie_post = get_the_terms( get_the_ID() , 'categorie');
+        $categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+        echo blocList(get_the_permalink(), get_the_title(), get_the_post_thumbnail(), get_the_ID(), get_field('references'), $categorie_name);
+        endwhile;
         wp_reset_postdata();
     else :
-        wp_send_json(false); // Si pas d'articles à charger, on renvoie false
+        wp_send_json(blocFalse()); // Si pas d'articles à charger, on renvoie false
     endif;
     
     wp_die(); // Terminer la requête AJAX correctement
-} 
+}
 
 //======================================================================
 // Fonction Select Format
@@ -190,43 +202,30 @@ function select_format() {
         wp_send_json_error('ID de format manquant');
     }
 
+    unset($_SESSION['paged']);
     $_SESSION['format_id'] = intval($_POST['formatId']);
-    $term = get_term($_SESSION['format_id'], 'format');
-    $_SESSION['format_name'] = $term->name; // Met à jour la variable globale
 
-    if ($_SESSION['format_id'] === 0) {
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6,
-        );
-    } else {        
-        $args = array(
-            'post_type' => 'photo',
-            'posts_per_page' => 6,
-            'format' => $_SESSION['format_name'], // Utilise le nom de la catégorie
-        );
-    }
+    $args = loadArgs();
 
     $query = new WP_Query($args);
 
     if ($query->have_posts()) :
-        while ($query->have_posts()) : $query->the_post(); ?>
-            <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
-                <?php if ( has_post_thumbnail() ): ?>
-                    <?php the_post_thumbnail(); ?>
-                <?php endif; ?>
-            </a>		
-        <?php endwhile;
+        while ($query->have_posts()) : $query->the_post();
+        $categorie_post = get_the_terms( get_the_ID() , 'categorie');
+        $categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+        echo blocList(get_the_permalink(), get_the_title(), get_the_post_thumbnail(), get_the_ID(), get_field('references'), $categorie_name);
+        endwhile;
         wp_reset_postdata();
     else :
-        wp_send_json(false); // Si pas d'articles à charger, on renvoie false
+        wp_send_json(blocFalse()); // Si pas d'articles à charger, on renvoie false
     endif;
     
     wp_die(); // Terminer la requête AJAX correctement
 }
 
 //======================================================================
-// Fonction Select Format
+// Fonction Select Filter
 //======================================================================
 function select_filter() {
     if (session_status() === PHP_SESSION_NONE) {
@@ -236,31 +235,104 @@ function select_filter() {
         wp_send_json_error('nom du filtre manquant');
     }
 
+    unset($_SESSION['paged']);
     $_SESSION['filter_name'] = sanitize_text_field($_POST['filterName']);
-    
-    $args = array(
-        'post_type' => 'photo',
-        'posts_per_page' => 6,
-        'order' => $_SESSION['filter_name'], // Utilise le nom de la catégorie
-    );
+
+    $args = loadArgs();
 
     $query = new WP_Query($args);
 
     if ($query->have_posts()) :
-        while ($query->have_posts()) : $query->the_post(); ?>
-            <a href="<?php the_permalink() ?>" title="<?php the_title(); ?>">
-                <?php if ( has_post_thumbnail() ): ?>
-                    <?php the_post_thumbnail(); ?>
-                <?php endif; ?>
-            </a>		
-        <?php endwhile;
+        while ($query->have_posts()) : $query->the_post(); 
+        $categorie_post = get_the_terms( get_the_ID() , 'categorie');
+        $categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+        echo blocList(get_the_permalink(), get_the_title(), get_the_post_thumbnail(), get_the_ID(), get_field('references'), $categorie_name);
+        endwhile;
         wp_reset_postdata();
     else :
-        wp_send_json(false); // Si pas d'articles à charger, on renvoie false
+        wp_send_json(blocFalse()); // Si pas d'articles à charger, on renvoie false
     endif;
     
     wp_die(); // Terminer la requête AJAX correctement
-} 
+}
+
+
+//======================================================================
+// Fonction Lightbox Info
+//======================================================================
+function lightbox_info(){
+    global $post;
+    if (!isset($_POST['postId'])) {
+        wp_send_json_error('ID du post manquant.');
+    }
+
+    $post_id = intval($_POST['postId']); // Nettoyer l'ID
+
+    if (!$post_id) {
+        wp_send_json_error('ID du post invalide.');
+    }
+
+    $post = get_post($post_id);
+
+    
+    if (!$post) {
+        wp_send_json_error('Post introuvable ou type de post incorrect.');
+    }
+
+    $references = get_field('references', $post_id); // Nom du champ ACF
+    
+    if (!$references) {
+        $references = 'Aucune référence trouvée.';
+    }
+
+    $terms = wp_get_post_terms($post_id, 'categorie');
+    $categories = [];
+    if (!is_wp_error($terms) && !empty($terms)) {
+        foreach ($terms as $term) {
+            $categories[] = $term->name; // Ajoute le nom des catégories à un tableau
+        }
+    }
+
+    // Récupérer l'article suivant
+    if ($_SESSION['categorie_id']) {
+        $previous_post = get_previous_post(true,'','categorie');
+        $next_post = get_next_post(true,'','categorie');
+    }else {
+        $next_post = get_next_post();
+        $previous_post = get_previous_post();
+    }
+
+    // Récupérer l'URL de l'image mise en avant
+    $thumbnail_url = get_the_post_thumbnail_url($post_id, 'full'); // Taille 'full'
+    if (!$thumbnail_url) {
+        $thumbnail_url = 'URL de l’image non disponible.';
+    }?>
+        <?php if ($previous_post): ?>
+            <div>
+                <p onclick="openLightbox('<?php echo($previous_post->ID); ?>', '<?php echo admin_url('admin-ajax.php');?>')"><span class="material-symbols-outlined bigIcon">arrow_left_alt</span></p>
+            </div>
+		<?php endif; ?>
+        <div class="lightbox_img">
+            <?php echo(get_the_post_thumbnail($post_id)); ?>
+            <div class="lightbox_img_data">
+                <p><?php echo($references); ?></p>
+                <p><?php echo($categories[0]); ?></p>
+            </div>
+        </div>
+        <?php if ($next_post): ?>
+        <div>
+            <p onclick="openLightbox('<?php echo($next_post->ID); ?>', '<?php echo admin_url('admin-ajax.php');?>')"><span class="material-symbols-outlined bigIcon">arrow_right_alt</span></p>
+        </div>
+        <?php endif; ?>
+        <div class="closeLightbox" onclick="closeLightbox()">
+            <span class="material-symbols-outlined">close</span>
+        </div>
+    <?php
+
+    wp_die(); // Terminer la requête AJAX correctement
+}
+
 
 //======================================================================
 // Hook & Action
@@ -296,3 +368,7 @@ add_action('wp_ajax_nopriv_select_format', 'select_format');
 //Chargement Ajax Fonction Select Trie
 add_action('wp_ajax_select_filter', 'select_filter');
 add_action('wp_ajax_nopriv_select_filter', 'select_filter');
+
+//Chargement Ajax Fonction Lightbox Info
+add_action('wp_ajax_lightbox_info', 'lightbox_info');
+add_action('wp_ajax_nopriv_lightbox_info', 'lightbox_info');

@@ -1,69 +1,94 @@
 /* _________________________________________________SINGLE_________________________________________________ */
-#photo, #actionPhoto {
-    display: flex;
+#photo,
+#actionPhoto {
+  display: flex;
+  flex-wrap: wrap;
 }
-#photo > div, #actionPhoto > div{
-    width: 50%;
+#photo > div,
+#actionPhoto > div {
+  width: 50%;
 }
 #photo .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    padding-right: 25%;
-    padding-bottom: 50px;
-    border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding-right: 25%;
+  padding-bottom: 50px;
+  border-bottom: 1px solid black;
 }
-#photo .info h1{
-    text-transform: uppercase;
-    font-size: 66px;
+#photo .info h1 {
+  text-transform: uppercase;
+  font-size: 66px;
 }
 
 #actionPhoto {
-    border-bottom: 1px solid black;
+  border-bottom: 1px solid black;
 }
-#actionPhoto .callToAction{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#actionPhoto .callToAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #actionPhoto .callToAction button {
-    border: none;
-    height: 50px;
-    width: 300px;
-    gap: 10px;
+  border: none;
+  height: 50px;
+  width: 300px;
+  gap: 10px;
 }
 #actionPhoto .navPhoto {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    align-items: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: end;
 }
 #actionPhoto .navPhoto .hoverImage {
-    width: 100px;
-    height: 100px;
+  width: 100px;
+  height: 100px;
 }
-#actionPhoto .navPhoto .hoverImage img{
-    object-fit: cover;
-    display: none;
+#actionPhoto .navPhoto .hoverImage img {
+  object-fit: cover;
+  display: none;
 }
-#actionPhoto .navPhoto .nextPrev a img{
-    height: 25px;
+#actionPhoto .navPhoto .nextPrev a img {
+  height: 25px;
 }
 
 #similarPhoto {
-    margin: 50px 0;
+  margin: 50px 0;
 }
-#similarPhoto h2{
-    margin-bottom: 25px;
-    text-transform: uppercase;
+#similarPhoto h2 {
+  margin-bottom: 25px;
+  text-transform: uppercase;
 }
-#similarPhoto .blocSimilarPhoto{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:30px
+#similarPhoto .blocSimilarPhoto {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
 }
-#similarPhoto .blocSimilarPhoto a img{
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
+#similarPhoto .blocSimilarPhoto a img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+@media screen and (max-width: 600px) {
+  #similarPhoto .blocSimilarPhoto {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  #photo > div {
+    width: 100% !important;
+  }
+  .info {
+    order: 2;
+  }
+  .image {
+    margin-top: 100px;
+  }
+  #actionPhoto .navPhoto {
+    display: none;
+  }
+  #actionPhoto .callToAction {
+    flex-direction: column;
+    width: 100%;
+  }
 }

@@ -23,12 +23,18 @@
 }
 .heroHeader h1 {
   color: transparent;
-  font-size: 120px;
+  font-size: clamp(45px, 8vw, 120px);
   text-transform: uppercase;
   font-style: italic;
 
   -webkit-text-stroke-width: 3px;
   -webkit-text-stroke-color: white;
+}
+.material-symbols-outlined {
+  cursor: pointer;
+}
+.bigIcon {
+  transform: scale(2);
 }
 
 /* _________________________________________________HEADER_________________________________________________ */
@@ -38,6 +44,12 @@ header {
   align-items: center;
   padding: 0 5vw;
   height: 6vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  background: white;
+  width: 100vw;
 }
 header a.custom-logo-link img.custom-logo {
   width: 250px;
@@ -57,14 +69,16 @@ header nav ul#primary-menu li a {
   font-family: "Space Mono", Arial;
   font-weight: 400;
 }
-
+.menu-burger {
+  display: none;
+}
 /* _________________________________________________FOOTER_________________________________________________ */
 footer {
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 1px solid black;
-  height: 6vh;
+  min-height: 6vh;
 }
 footer ul#footer-menu {
   display: flex;
@@ -86,11 +100,13 @@ footer ul#footer-menu li a {
   display: none;
 }
 #contact.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: fixed;
 
-  width: clamp(125px, 50vw, 400px);
-  height: clamp(600px, 60vh, 800px);
+  width: clamp(125px, 50vw, 600px);
+  height: auto;
   top: 50%;
   right: 50%;
   transform: translate(50%, -50%);
@@ -98,12 +114,47 @@ footer ul#footer-menu li a {
   border: 5px solid black;
   background: white;
 }
-#contact h2 {
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 50px;
+#contact h2 img {
+  min-height: 125px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+#contact .wpcf7 {
+  width: clamp(60px, 20vw, 300px);
+}
+#contact .wpcf7 input,
+#contact .wpcf7 textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  width: clamp(60px, 20vw, 300px);
+  margin-bottom: 15px;
+}
+#contact .wpcf7 input {
+  height: 40px;
+}
+#contact .wpcf7 label {
+  font-size: 12px;
+  color: black;
+  text-decoration: none;
+  font-variant-caps: small-caps;
+  font-family: "poppins", Arial;
+  font-weight: 500;
+}
+#contact .wpcf7 input[type="submit"] {
+  height: 50px;
+  border: none;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.5s;
+  background-color: #d8d8d8;
+}
+#contact .wpcf7 input[type="submit"]:hover {
+  background: black;
+  color: white;
 }
 
+/* _________________________________________________IMAGE_________________________________________________ */
 #listPhoto {
   margin: 50px 0;
   display: flex;
@@ -118,6 +169,12 @@ footer ul#footer-menu li a {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 30px;
+}
+#listPhoto .blocListPhoto a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
 }
 #listPhoto .blocListPhoto a img {
   aspect-ratio: 1 / 1;
@@ -140,6 +197,7 @@ footer ul#footer-menu li a {
 /* _________________________________________________SELECT_________________________________________________ */
 .filter {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   gap: 25px;
   justify-content: flex-start;
@@ -161,7 +219,6 @@ footer ul#footer-menu li a {
 #select-filter {
   margin-left: auto;
 }
-
 .custom-options {
   list-style: none;
   list-style-position: inside;
@@ -186,4 +243,139 @@ footer ul#footer-menu li a {
 .defaultOpen {
   border-radius: 0.5rem 0.5rem 0 0 !important;
   border: 1px solid rgba(0, 0, 255, 0.5) !important;
+}
+
+/* _________________________________________________Lightbox_________________________________________________ */
+.image {
+  position: relative;
+}
+.imgHover {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 15px;
+}
+.image:hover .imgHover {
+  display: flex;
+}
+.fullScreenIcon {
+  background: black;
+  width: 35px;
+  height: 35px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+}
+.fullScreenIcon span {
+  color: white;
+  font-size: 18px;
+}
+.eyeIcon span {
+  color: white;
+  font-size: 50px;
+  font-weight: lighter;
+}
+.imgInfo {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  color: white;
+}
+#lightbox {
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+#lightbox.open {
+  display: flex !important;
+}
+#lightbox .lightbox_img {
+  margin: 0 5vw;
+}
+#lightbox .lightbox_img img {
+  width: auto;
+  height: auto;
+  max-width: 80vw;
+  max-height: 80vh;
+  object-fit: contain;
+}
+#lightbox .lightbox_img .lightbox_img_data {
+  padding-top: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+#lightbox .closeLightbox {
+  position: absolute;
+  top: 5%;
+  left: 95%;
+}
+#lightbox .closeLightbox span {
+  font-size: 40px;
+}
+
+@media screen and (max-width: 600px) {
+  .heroHeader h1 {
+    -webkit-text-stroke-width: 1px;
+  }
+  .menu-burger {
+    display: flex;
+  }
+  #menu nav {
+    display: none;
+    position: fixed;
+    top: 6vh;
+    width: 100vw;
+    left: 0;
+    z-index: 50;
+    height: 94vh;
+    background-color: #e00000;
+  }
+  #menu nav.navOpen {
+    display: flex;
+  }
+  #menu nav ul {
+    flex-direction: column;
+    gap: 50px;
+    width: 100vw;
+    height: 94vh;
+  }
+  #listPhoto .blocListPhoto {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  header nav ul#primary-menu li a {
+    color: white;
+    font-size: 30px;
+  }
+  footer {
+    padding: 25px;
+  }
+  footer ul#footer-menu {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .custom-select {
+    flex-grow: 1;
+    flex-basis: 350px;
+  }
+  .custom-default {
+    width: 100%;
+  }
 }
