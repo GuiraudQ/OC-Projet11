@@ -4,6 +4,9 @@
   display: flex;
   flex-wrap: wrap;
 }
+#photo {
+  justify-content: space-between;
+}
 #photo > div,
 #actionPhoto > div {
   width: 50%;
@@ -12,13 +15,14 @@
   display: flex;
   flex-direction: column;
   justify-content: end;
-  padding-right: 25%;
+  width: 420px;
   padding-bottom: 50px;
   border-bottom: 1px solid black;
 }
 #photo .info h1 {
   text-transform: uppercase;
   font-size: 66px;
+  line-height: 66px;
 }
 
 #actionPhoto {

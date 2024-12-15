@@ -4,6 +4,18 @@
   font-weight: 400;
   font-style: normal;
 }
+@font-face {
+  font-family: "Poppins";
+  src: url("../font/Poppins/Poppins-Regular.ttf") format("TrueType");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Poppins thin";
+  src: url("../font/Poppins/Poppins-Thin.ttf") format("TrueType");
+  font-weight: 200;
+  font-style: normal;
+}
 * {
   font-family: "Space Mono", Arial;
   position: relative;
@@ -101,11 +113,24 @@ footer ul#footer-menu li a {
 }
 #contact.active {
   display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 50;
+}
+#contact .contactForm {
+  display: flex;
   flex-direction: column;
   align-items: center;
   position: fixed;
 
-  width: clamp(125px, 50vw, 600px);
+  width: clamp(400px, 50vw, 500px);
   height: auto;
   top: 50%;
   right: 50%;
@@ -114,20 +139,16 @@ footer ul#footer-menu li a {
   border: 5px solid black;
   background: white;
 }
-#contact h2 img {
-  min-height: 125px;
-  object-fit: cover;
-  margin-bottom: 15px;
-}
+
 #contact .wpcf7 {
-  width: clamp(60px, 20vw, 300px);
+  width: clamp(200px, 50vw, 300px);
 }
 #contact .wpcf7 input,
 #contact .wpcf7 textarea {
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 8px;
-  width: clamp(60px, 20vw, 300px);
+  width: clamp(200px, 50vw, 300px);
   margin-bottom: 15px;
 }
 #contact .wpcf7 input {
@@ -138,7 +159,7 @@ footer ul#footer-menu li a {
   color: black;
   text-decoration: none;
   font-variant-caps: small-caps;
-  font-family: "poppins", Arial;
+  font-family: "Poppins", Arial;
   font-weight: 500;
 }
 #contact .wpcf7 input[type="submit"] {
@@ -212,6 +233,8 @@ footer ul#footer-menu li a {
   border-radius: 0.5rem;
   padding: 10px;
   cursor: pointer;
+  font-family: "Poppins", Arial;
+  font-size: 12px;
 
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -289,6 +312,10 @@ footer ul#footer-menu li a {
   justify-content: space-between;
   width: 100%;
   color: white;
+  text-transform: uppercase;
+}
+.imgInfo p {
+  font-family: "Poppins", Arial !important;
 }
 #lightbox {
   width: 100vw;
@@ -319,6 +346,11 @@ footer ul#footer-menu li a {
   padding-top: 25px;
   display: flex;
   justify-content: space-between;
+  font-family: "Poppins", Arial !important;
+}
+#lightbox .lightbox_img .lightbox_img_data p {
+  font-family: "Poppins", Arial !important;
+  text-transform: uppercase;
 }
 #lightbox .closeLightbox {
   position: absolute;
@@ -336,6 +368,9 @@ footer ul#footer-menu li a {
   .menu-burger {
     display: flex;
   }
+  .menu-burger .menuClose {
+    display: none;
+  }
   #menu nav {
     display: none;
     position: fixed;
@@ -348,6 +383,12 @@ footer ul#footer-menu li a {
   }
   #menu nav.navOpen {
     display: flex;
+  }
+  #menu nav.navOpen + .menu-burger .menuClose {
+    display: block !important;
+  }
+  #menu nav.navOpen + .menu-burger .menuOpen {
+    display: none !important;
   }
   #menu nav ul {
     flex-direction: column;

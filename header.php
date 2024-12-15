@@ -21,10 +21,7 @@
 
     <!-- Menu de navigation -->
     <div id="menu">
-        <div class="menu-burger">
-            <span class="material-symbols-outlined">menu</span>
-        </div>
-        <nav>
+    <nav>
             <?php
             wp_nav_menu(array(
                 'theme_location' => 'primary',
@@ -32,6 +29,10 @@
             ));
             ?>
         </nav>
+        <div class="menu-burger">
+            <span class="material-symbols-outlined menuOpen">menu</span>
+            <span class="material-symbols-outlined menuClose">close</span>
+        </div>
     </div>
     </header>
 

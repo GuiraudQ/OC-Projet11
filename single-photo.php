@@ -22,6 +22,9 @@ if ($previous_post) { // Vérifie s'il existe un article précédent
 
 	$categorie_post = get_the_terms( get_the_ID() , 'categorie');
 	$categorie_name = join(', ', wp_list_pluck($categorie_post, 'name'));
+
+	$format_post = get_the_terms( get_the_ID() , 'format');
+	$format_name = join(', ', wp_list_pluck($format_post, 'name'));
 ?>
 
 <div class="container">
@@ -31,8 +34,8 @@ if ($previous_post) { // Vérifie s'il existe un article précédent
 			<?php if( get_field('references') ): ?>
 				<p>Références : <?php the_field('references'); ?></p>
 			<?php endif; ?>
-			<p><?php the_terms( get_the_ID() , 'categorie', 'Catégorie :', ', ', '' ); ?></p>
-			<p><?php the_terms( get_the_ID() , 'format', 'Formats :', ', ', '' ); ?></p>
+			<p>Catégorie : <?php echo($categorie_name); ?></p>
+			<p>Formats : <?php echo($format_name); ?></p>
 			<?php if( get_field('type') ): ?>
 				<p>Types : <?php the_field('type'); ?></p>
 			<?php endif; ?>
