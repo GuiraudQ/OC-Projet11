@@ -19,6 +19,9 @@
   padding-bottom: 50px;
   border-bottom: 1px solid black;
 }
+#photo .info > * {
+  margin-bottom: 20px;
+}
 #photo .info h1 {
   text-transform: uppercase;
   font-size: 66px;
